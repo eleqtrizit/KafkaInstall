@@ -11,7 +11,8 @@ To create a cluster with this script, run the script one machine at a time.  Thi
 After cloning the repo, run install_kafka.sh
 
 The script will follow these steps:
-* Install depedencies
+* update and upgrade w/ apt
+* Install dependencies
 * Gather your network address range.
   * e.g. 192.168.0.1/24
 * Gather your Zookeeper address(es).  
@@ -29,7 +30,3 @@ The script will follow these steps:
 * Install Kafka services
 * Strip rights away from Kafka user
 * Show the log of Kafka starting
-
-
-I
-  
