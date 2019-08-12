@@ -88,6 +88,7 @@ download_kafka(){
     echo Downloading Kafka...
     curl "$kafka_download" -o kafka.tgz
     tar xzf kafka.tgz --strip 1
+    rm kafka.tgz
 }
 
 configure_kafka_with_zookeeper(){
