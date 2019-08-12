@@ -1,5 +1,6 @@
 #!/bin/sh
 
+clone_dir=$(pwd)
 cd || exit
 sudo useradd kafka -m
 echo Enter password for user kafka:
@@ -32,14 +33,15 @@ mkdir kafka
 cd kafka || exit
 echo curl "$kafka_download"
 echo Downloading Kafka...
-curl "$kafka_download" | tar xvzf --strip 1
+curl "$kafka_download" -o kafka.tgz
+tar xvzf kafka.tgz --strip 1
 
-echo delete.topic.enable=true > config/server.properties
+echo delete.topic.enable=true >> config/server.properties
 cd || exit
 sudo mv kafka /home/kafka
 sudo chown -R kafka:kafka /home/kafka/kafka
 
-
+cd $clone_dir || exit
 sudo cp zookeeper.service /etc/systemd/system/
 sudo cp kafka.service /etc/systemd/system/
 
