@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cd || exit
 sudo useradd kafka -m
 echo Enter password for user kafka:
 sudo passwd kafka
@@ -19,22 +20,22 @@ sudo apt -y install openjdk-11-jdk-headless
 echo Resolving Kafka download...
 echo https://kafka.apache.org/downloads
 curl https://kafka.apache.org/downloads -o downloads.html
-closer=$(xmllint --html downloads.html --xpath //a/@href 2>/dev/null | sed 's/ href="\([^"]*\)"/\1/g'  | grep closer | grep -v src | head -n 1)
+closer=$(xmllint --html downloads.html --xpath //a/@href 2>/dev/null | sed 's/ href="\([^"]*\)"/\1\n/g'  | grep closer | grep -v src | head -n 1)
 
-echo curl $closer
-curl $closer -o mirrors.html
-kafka_download=$(xmllint --html mirrors.html --xpath //a/@href 2>/dev/null | sed 's/ href="\([^"]*\)"/\1/g' | grep -E 'https*://(mirror|apache)' | grep kafka | grep tgz | head -n 1)
+echo curl "$closer"
+curl "$closer" -o mirrors.html
+kafka_download=$(xmllint --html mirrors.html --xpath //a/@href 2>/dev/null | sed 's/ href="\([^"]*\)"/\1\n/g' | grep -E 'https?://(mirror|apache)' | grep kafka | grep tgz | head -n 1)
 
-echo curl $kafka_download
+rm downloads.html mirrors.html
+
+mkdir kafka
+cd kafka || exit
+echo curl "$kafka_download"
 echo Downloading Kafka...
-curl $kafka_download -o kafka.tgz
+curl "$kafka_download" | tar xvzf --strip 1
 
-mkdir ~/kafka
-mv kafka.tgz ~/kafka
-cd ~/kafka
-tar -xvzf ~/Downloads/kafka.tgz --strip 1
-echo delete.topic.enable=true > ~/kafka/config/server.properties
-cd
+echo delete.topic.enable=true > config/server.properties
+cd || exit
 sudo mv kafka /home/kafka
 sudo chown -R kafka:kafka /home/kafka/kafka
 
@@ -46,5 +47,4 @@ sudo systemctl start kafka
 
 sudo journalctl -u kafka
 sudo systemctl enable kafka
-
 
