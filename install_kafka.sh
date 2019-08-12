@@ -12,6 +12,7 @@ validated_network=192.168.0.0/24
 # now with automation and major modifications!
 
 get_network(){
+    echo
     echo Enter Network \(i.e. 192.168.0.0/24\):
     read -r network
     validated_network=$(echo "$network" | perl -ne 'if ($_ =~ /^(\d+\.\d+\.\d+\.\d+\/\d+)$/){print "$1\n"}else{print "0\n"}')
@@ -23,7 +24,8 @@ get_network(){
 }
 
 search_for_kafka_zookepper(){
-    echo Searching for existing Zookeepers
+    echo
+    echo Searching for existing Zookeepers...
     val=$(nmap $validated_network -p 2181 --open -oG - | grep Ports | perl -ne 'if ($_ =~ /Host: (\d+\.\d+\.\d+\.\d+).*?Ports: (\d+)/) {print "$1:$2\n"}')
     if [ -n "$val" ]
     then
@@ -33,7 +35,8 @@ search_for_kafka_zookepper(){
 }
 
 search_for_kafka_brokers(){
-    echo Searching for existing Brokers
+    echo
+    echo Searching for existing Brokers...
     broker_val=$(nmap $validated_network -p 9092 --open -oG - | grep Ports | perl -ne 'if ($_ =~ /Host: (\d+\.\d+\.\d+\.\d+).*?Ports: (\d+)/) {print "$1:$2\n"}' | wc -l)
     echo "$broker_key" set to "$broker_val"
 }
@@ -142,16 +145,16 @@ extra_steps(){
 
 
 
-#update_packages
-#get_network
-validated_network=192.168.100.0/24
+update_packages
+get_network
+#validated_network=192.168.100.0/24
 search_for_kafka_zookepper
 search_for_kafka_brokers
 setup_kafka_user
 download_kafka
 
 # is there already a zookeeper?
-if [ $zookeeper_val == $zookeeper_master ]
+if [ $zookeeper_val = $zookeeper_master ]
 then
     configure_kafka_with_zookeeper
 else
