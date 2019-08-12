@@ -35,7 +35,7 @@ cd kafka || exit
 echo curl "$kafka_download"
 echo Downloading Kafka...
 curl "$kafka_download" -o kafka.tgz
-tar xvzf kafka.tgz --strip 1
+tar xzf kafka.tgz --strip 1
 
 echo >> config/server.properties
 echo delete.topic.enable=true >> config/server.properties
