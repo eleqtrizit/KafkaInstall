@@ -10,6 +10,9 @@ echo Updating packages...
 sudo apt update
 sudo apt -y upgrade
 
+echo Installing XMLLint...
+sudo apt -y install libxml2-utils
+
 echo Installing Java JDK...
 sudo apt -y install openjdk-11-jdk-headless
 
