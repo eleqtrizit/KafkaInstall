@@ -132,7 +132,12 @@ install_kafka_services(){
     sudo systemctl enable kafka
 }
 
-
+lockdown_kafka_user(){
+    sudo deluser kafka sudo
+    sudo passwd kafka -l
+    sudo su - kafka
+    sudo passwd kafka -u
+}
 
 extra_steps(){
     echo
@@ -147,8 +152,12 @@ extra_steps(){
 
 
 update_packages
-get_network
+
+# if you don't want user input for the network question, 
+# uncomment below, and comment out get_network
 #validated_network=192.168.100.0/24
+get_network
+
 search_for_kafka_zookepper
 search_for_kafka_brokers
 setup_kafka_user
@@ -163,6 +172,7 @@ else
 fi
 
 install_kafka_services
+lockdown_kafka_user
 
 cat /home/kafka/kafka/kafka.log
 echo Kafka Installed
