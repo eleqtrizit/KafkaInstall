@@ -3,6 +3,7 @@
 clone_dir=$(pwd)
 cd || exit
 sudo useradd kafka -m
+echo
 echo Enter password for user kafka:
 sudo passwd kafka
 sudo adduser kafka sudo
@@ -36,6 +37,7 @@ echo Downloading Kafka...
 curl "$kafka_download" -o kafka.tgz
 tar xvzf kafka.tgz --strip 1
 
+echo >> config/server.properties
 echo delete.topic.enable=true >> config/server.properties
 cd || exit
 sudo mv kafka /home/kafka
