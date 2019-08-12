@@ -27,16 +27,9 @@ search_for_kafka_zookepper(){
     echo
     echo Searching for existing Zookeepers...
     val=$(nmap $validated_network -p 2181 --open -oG - | grep Ports | perl -ne 'if ($_ =~ /Host: (\d+\.\d+\.\d+\.\d+).*?Ports: (\d+)/) {print "$1:$2\n"}')
-    count=$($val | wc -l)
-    if [ $count = 0]
+    if [ -n "$val" ]
     then
-	    echo No zookeepers found.  Using default "$zookeeper_master"
-    else
-    	echo These are the existing zookeepers.  
-	echo "$val"
-	echo Enter a command separated list of zk servers:
-	echo e.g 192.168.100.100:2181,10.1.10.1:3000  
-	read zookeeper_val
+        zookeeper_val=$val
     fi
     echo "$zookeeper_key" set to "$zookeeper_val"
 }
@@ -114,12 +107,11 @@ configure_kafka_broker_only(){
     echo Reconfiguring Kafka as broker to "$zookeeper_val"
 
     cd /home/kafka/kafka
-    echo >> config/server.properties
-    echo delete.topic.enable=true >> config/server.properties
+    sudo echo >> config/server.properties
     # swap default broker key
-    sed -i "s/$broker_key=0/$broker_key=$broker_val/" config/server.properties
+    sudo sed -i "s/$broker_key=0/$broker_key=$broker_val/" config/server.properties
     # swap default zookeeper address
-    sed -i "s/$zookeeper_key=$zookeeper_master/$zookeeper_key=$zookeeper_val/" config/server.properties
+    sudo sed -i "s/$zookeeper_key=$zookeeper_master/$zookeeper_key=$zookeeper_val/" config/server.properties
     cd || exit
     sudo mv kafka /home/kafka
     sudo chown -R kafka:kafka /home/kafka/kafka
@@ -159,17 +151,10 @@ extra_steps(){
 
 
 
-update_packages
-
-# if you don't want user input for the network question, 
-# uncomment below, and comment out get_network
-#validated_network=192.168.100.0/24
-get_network
+validated_network=192.168.100.0/24
 
 search_for_kafka_zookepper
 search_for_kafka_brokers
-setup_kafka_user
-download_kafka
 
 # is there already a zookeeper?
 if [ $zookeeper_val = $zookeeper_master ]
@@ -179,8 +164,5 @@ else
     configure_kafka_broker_only
 fi
 
-install_kafka_services
-lockdown_kafka_user
 
-cat /home/kafka/kafka/kafka.log
 echo Kafka Installed
