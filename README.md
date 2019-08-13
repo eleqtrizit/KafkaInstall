@@ -3,7 +3,7 @@
 
 This is a helper shell script to quickly get a Kafka cluster online.
 
-This script is fundamentally fragile.  As of today (8/13) it works great.  In the future, it could break.  For example, if Apache Kafka's download page fundamentally changes it's format, it won't download Kafka. However, every part of this script is in functions, so you should be able to debug this by simply running them one at a time.
+This script is fundamentally fragile.  As of today (8/13/19) it works great.  In the future, it could break.  For example, if Apache Kafka's download page fundamentally changes it's format, it won't download Kafka. However, every part of this script is in functions, so you should be able to debug this by simply running them one at a time.
 
 It is based on the instructions found here:<br>
 https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-18-04
